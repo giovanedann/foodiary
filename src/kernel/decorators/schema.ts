@@ -9,5 +9,5 @@ export function Schema(schema: z.ZodSchema): ClassDecorator {
 }
 
 export function getSchema(target: any): z.ZodSchema | undefined {
-  return Reflect.getMetadata(SCHEMA_METADATA_KEY, target);
+  return Reflect.getMetadata(SCHEMA_METADATA_KEY, target.constructor);
 }
