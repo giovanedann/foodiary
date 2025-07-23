@@ -1,4 +1,4 @@
-import { getSchema } from "../../kernel/decorators/schema";
+import { getSchema } from "@kernel/decorators/schema";
 
 export abstract class Controller<TBody = undefined> {
   protected abstract handle(

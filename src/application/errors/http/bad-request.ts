@@ -1,4 +1,5 @@
-import { ErrorCode } from "../error-codes";
+import { ErrorCode } from "@application/errors/error-codes";
+
 import { HttpError } from "./http-error";
 
 export class BadRequestError extends HttpError {

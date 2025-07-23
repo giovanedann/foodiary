@@ -1,11 +1,12 @@
 import { ZodError } from "zod";
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 
-import { Controller } from "../../application/contracts/controller";
-import { lambdaBodyParser } from "../utils/lambda-body-parser";
-import { ErrorCode } from "../../application/errors/error-codes";
-import { lambdaErrorResponse } from "../utils/lambda-error-response";
-import { HttpError } from "../../application/errors/http/http-error";
+import { Controller } from "@application/contracts/controller";
+import { ErrorCode } from "@application/errors/error-codes";
+import { HttpError } from "@application/errors/http/http-error";
+
+import { lambdaBodyParser } from "@main/utils/lambda-body-parser";
+import { lambdaErrorResponse } from "@main/utils/lambda-error-response";
 
 export function lambdaHttpAdapter(controller: Controller<unknown>) {
   return async (
