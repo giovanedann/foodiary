@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { IController } from "../contracts/controller";
+import { Controller } from "../contracts/controller";
 
 const schema = z.object({
   name: z.string().min(1, { error: "Name is required" }),
@@ -8,15 +8,17 @@ const schema = z.object({
     .min(1, { error: "Email is required" }),
 });
 
-export class HelloController implements IController<unknown> {
-  async handle(
-    request: IController.Request,
-  ): Promise<IController.Response<unknown>> {
-    const parsedBody = schema.parse(request.body);
+export class HelloController extends Controller<unknown> {
+  protected override schema = schema;
 
+  protected override async handle(
+    request: Controller.Request,
+  ): Promise<Controller.Response<unknown>> {
     return {
       statusCode: 200,
-      body: parsedBody,
+      body: {
+        parsedBody: request.body,
+      },
     };
   }
 }

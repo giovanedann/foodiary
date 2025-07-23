@@ -1,10 +1,10 @@
 import { ZodError } from "zod";
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 
-import { IController } from "../../application/contracts/controller";
+import { Controller } from "../../application/contracts/controller";
 import { lambdaBodyParser } from "../utils/lambda-body-parser";
 
-export function lambdaHttpAdapter(controller: IController<unknown>) {
+export function lambdaHttpAdapter(controller: Controller<unknown>) {
   return async (
     event: APIGatewayProxyEventV2,
   ): Promise<APIGatewayProxyResultV2> => {
@@ -13,7 +13,7 @@ export function lambdaHttpAdapter(controller: IController<unknown>) {
       const queryParams = event.queryStringParameters || {};
       const body = lambdaBodyParser(event.body);
 
-      const response = await controller.handle({
+      const response = await controller.execute({
         body,
         params,
         queryParams,
