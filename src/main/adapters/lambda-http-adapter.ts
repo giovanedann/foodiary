@@ -3,6 +3,9 @@ import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 
 import { Controller } from "../../application/contracts/controller";
 import { lambdaBodyParser } from "../utils/lambda-body-parser";
+import { ErrorCode } from "../../application/errors/error-codes";
+import { lambdaErrorResponse } from "../utils/lambda-error-response";
+import { HttpError } from "../../application/errors/http/http-error";
 
 export function lambdaHttpAdapter(controller: Controller<unknown>) {
   return async (
@@ -25,29 +28,25 @@ export function lambdaHttpAdapter(controller: Controller<unknown>) {
       };
     } catch (error) {
       if (error instanceof ZodError) {
-        return {
+        return lambdaErrorResponse({
+          code: ErrorCode.VALIDATION,
+          message: error.issues.map((issue) => ({
+            field: issue.path.join("."),
+            message: issue.message,
+          })),
           statusCode: 400,
-          body: JSON.stringify({
-            error: {
-              code: "VALIDATION",
-              message: error.issues.map((issue) => ({
-                field: issue.path.join("."),
-                message: issue.message,
-              })),
-            },
-          }),
-        };
+        });
       }
 
-      return {
+      if (error instanceof HttpError) {
+        return lambdaErrorResponse(error);
+      }
+
+      return lambdaErrorResponse({
+        code: ErrorCode.INTERNAL_SERVER_ERROR,
+        message: "Internal server error",
         statusCode: 500,
-        body: JSON.stringify({
-          error: {
-            code: "INTERNAL_SERVER_ERROR",
-            message: "An unexpected error occurred",
-          },
-        }),
-      };
+      });
     }
   };
 }
