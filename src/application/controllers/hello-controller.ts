@@ -2,8 +2,8 @@ import { Schema } from "@kernel/decorators/schema";
 
 import { Controller } from "@application/contracts/controller";
 import {
-  HelloBody,
-  helloSchema,
+    HelloBody,
+    helloSchema,
 } from "@application/controllers/schemas/hello-schema";
 
 @Schema(helloSchema)

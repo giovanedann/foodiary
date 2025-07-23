@@ -1,5 +1,5 @@
-import { ZodError } from "zod";
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
+import { ZodError } from "zod";
 
 import { Controller } from "@application/contracts/controller";
 import { ErrorCode } from "@application/errors/error-codes";
