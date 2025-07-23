@@ -11,7 +11,8 @@ package:
   individually: true
 
 build:
-  configFile: ./esbuild.config.mjs
+  esbuild:
+    configFile: ./esbuild.config.mjs
 
 functions:
   hello:
