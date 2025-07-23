@@ -10,11 +10,20 @@ export abstract class Controller<TBody = undefined> {
   public execute(
     request: Controller.Request,
   ): Promise<Controller.Response<TBody>> {
-    if (this.schema) {
-      this.schema.parse(request.body);
+    const body = this.validateBody(request.body);
+
+    return this.handle({
+      ...request,
+      body,
+    });
+  }
+
+  private validateBody(body: Controller.Request["body"]) {
+    if (!this.schema) {
+      return body;
     }
 
-    return this.handle(request);
+    return this.schema.parse(body) as Record<string, unknown>;
   }
 }
 
