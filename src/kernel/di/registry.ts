@@ -1,7 +1,10 @@
 type Constructor<T = any> = new (...args: any) => T;
 
 export class Registry {
+  private static instance: Registry | undefined;
   private readonly providers = new Map<string, Registry.Provider>();
+
+  private constructor() {}
 
   register(implementation: Constructor){
     const token = implementation.name;
@@ -26,6 +29,13 @@ export class Registry {
     const dependencies = provider.dependencies.map(dep => this.resolve(dep));
 
     return new provider.implementation(...dependencies);
+  }
+
+  static getInstance() {
+    if (!this.instance) {
+      this.instance = new Registry();
+    }
+    return this.instance;
   }
 }
 
