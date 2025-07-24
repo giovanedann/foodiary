@@ -1,4 +1,4 @@
-type Constructor<T = any> = new (...args: any) => T;
+import { Constructor } from "src/@shared/types/constructor";
 
 export class Registry {
   private static instance: Registry | undefined;
@@ -35,6 +35,7 @@ export class Registry {
     if (!this.instance) {
       this.instance = new Registry();
     }
+
     return this.instance;
   }
 }
