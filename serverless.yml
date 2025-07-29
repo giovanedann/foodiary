@@ -7,6 +7,7 @@ provider:
   runtime: nodejs22.x
   memorySize: 128
   stage: ${opt:stage, 'dev'}
+  environment: ${file(./sls/config/env.yml)}
 
 package:
   individually: true
@@ -14,6 +15,10 @@ package:
 build:
   esbuild:
     configFile: ./esbuild.config.mjs
+
+custom:
+  cognito:
+    PoolName: ${self:service}-${self:provider.stage}-userpool
 
 functions:
   - ${file(./sls/functions/auth.yml)}

@@ -43,6 +43,9 @@ export function lambdaHttpAdapter(controller: Controller<unknown>) {
         return lambdaErrorResponse(error);
       }
 
+      // eslint-disable-next-line no-console
+      console.log(error);
+
       return lambdaErrorResponse({
         code: ErrorCode.INTERNAL_SERVER_ERROR,
         message: "Internal server error",
