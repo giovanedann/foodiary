@@ -4,12 +4,13 @@ import { ApplicationError } from "./application.error";
 
 export class EmailAlreadyInUseError extends ApplicationError {
   public override code: ErrorCode;
+  public override statusCode: number = 409; // Conflict
 
-  constructor(message?: any, code?: ErrorCode) {
+  constructor() {
     super();
 
     this.name = "EmailAlreadyInUseError";
-    this.message = message ?? "Email already in use";
-    this.code = code ?? ErrorCode.EMAIL_ALREADY_IN_USE;
+    this.message = "Email already in use";
+    this.code = ErrorCode.EMAIL_ALREADY_IN_USE;
   }
 }

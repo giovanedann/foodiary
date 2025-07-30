@@ -44,7 +44,7 @@ export function lambdaHttpAdapter(controller: Controller<unknown>) {
         return lambdaErrorResponse({
           code: error.code,
           message: error.message,
-          statusCode: 400,
+          statusCode: error.statusCode || 400,
         });
       }
 
