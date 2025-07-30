@@ -25,3 +25,4 @@ functions:
 
 resources:
   - ${file(./sls/resources/user-pool.yml)}
+  - ${file(./sls/resources/main-table.yml)}
