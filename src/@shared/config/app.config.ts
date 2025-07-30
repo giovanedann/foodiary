@@ -4,6 +4,7 @@ import { env } from "./env";
 @Injectable()
 export class AppConfig {
   public readonly auth: AppConfig.Auth;
+  public readonly database: AppConfig.Database;
 
   constructor() {
     this.auth = {
@@ -12,6 +13,12 @@ export class AppConfig {
           id: env.COGNITO_CLIENT_ID,
           secret: env.COGNITO_CLIENT_SECRET,
         },
+      },
+    };
+
+    this.database = {
+      dynamodb: {
+        mainTableName: env.DYNAMO_DB_MAIN_TABLE_NAME,
       },
     };
   }
@@ -23,7 +30,13 @@ export namespace AppConfig {
       client: {
         id: string;
         secret: string;
-      }
-    }
-  }
+      };
+    };
+  };
+
+  export type Database = {
+    dynamodb: {
+      mainTableName: string;
+    };
+  };
 }
