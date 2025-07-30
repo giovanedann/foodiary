@@ -2,15 +2,16 @@ import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import { ZodError } from "zod";
 
 import { Controller } from "@application/contracts/controller";
+import { ApplicationError } from "@application/errors/application/application.error";
 import { ErrorCode } from "@application/errors/error-codes";
-import { HttpError } from "@application/errors/http/http-error";
+import { HttpError } from "@application/errors/http/http.error";
 
 import { lambdaBodyParser } from "@main/utils/lambda-body-parser";
 import { lambdaErrorResponse } from "@main/utils/lambda-error-response";
 
 export function lambdaHttpAdapter(controller: Controller<unknown>) {
   return async (
-    event: APIGatewayProxyEventV2,
+    event: APIGatewayProxyEventV2
   ): Promise<APIGatewayProxyResultV2> => {
     try {
       const params = event.pathParameters || {};
@@ -35,6 +36,14 @@ export function lambdaHttpAdapter(controller: Controller<unknown>) {
             field: issue.path.join("."),
             message: issue.message,
           })),
+          statusCode: 400,
+        });
+      }
+
+      if (error instanceof ApplicationError) {
+        return lambdaErrorResponse({
+          code: error.code,
+          message: error.message,
           statusCode: 400,
         });
       }

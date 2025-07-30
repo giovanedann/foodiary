@@ -20,6 +20,15 @@ export class AccountItem {
     });
   }
 
+  static toEntity(item: AccountItem.ItemType): Account {
+    return new Account({
+      id: item.id,
+      email: item.email,
+      externalId: item.externalId,
+      createdAt: new Date(item.createdAt),
+    });
+  }
+
   toDynamoItem(): AccountItem.ItemType {
     return {
       ...this.keys,
