@@ -13,3 +13,10 @@ pre-sign-up-trigger:
         trigger: PreSignUp
         existing: true
         forceDeploy: true
+
+sign-in:
+  handler: src/main/functions/auth/sign-in.handler
+  events:
+    - httpApi:
+        path: /auth/sign-in
+        method: POST
