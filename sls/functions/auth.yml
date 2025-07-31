@@ -2,8 +2,8 @@ sign-up:
   handler: src/main/functions/auth/sign-up.handler
   events:
     - httpApi:
-        path: /auth/sign-up
         method: POST
+        path: /auth/sign-up
 
 pre-sign-up-trigger:
   handler: src/main/functions/auth/pre-sign-up-trigger.handler
@@ -18,5 +18,5 @@ sign-in:
   handler: src/main/functions/auth/sign-in.handler
   events:
     - httpApi:
-        path: /auth/sign-in
         method: POST
+        path: /auth/sign-in
