@@ -22,6 +22,10 @@ Resources:
           RequireLowercase: true
           RequireNumbers: true
           RequireSymbols: true
+      LambdaConfig:
+        PreTokenGenerationConfig:
+          LambdaVersion: V3_0
+          LambdaArn: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:service}-${self:provider.stage}-preTokenGenerationTrigger"
 
   UserPoolClient:
     Type: AWS::Cognito::UserPoolClient
@@ -37,3 +41,12 @@ Resources:
       RefreshTokenRotation:
         Feature: ENABLED
         RetryGracePeriodSeconds: 0
+
+  PreTokenGenerationLambdaPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn: PreTokenGenerationTriggerLambdaFunction
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:service}-${self:provider.stage}-preTokenGenerationTrigger"
+      Principal: cognito-idp.amazonaws.com
+      SourceArn: !GetAtt UserPool.Arn

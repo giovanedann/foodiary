@@ -1,11 +1,18 @@
-sign-up:
+signUp:
   handler: src/main/functions/auth/sign-up.handler
   events:
     - httpApi:
         method: POST
         path: /auth/sign-up
 
-pre-sign-up-trigger:
+signIn:
+  handler: src/main/functions/auth/sign-in.handler
+  events:
+    - httpApi:
+        method: POST
+        path: /auth/sign-in
+
+preSignUpTrigger:
   handler: src/main/functions/auth/pre-sign-up-trigger.handler
   events:
     - cognitoUserPool:
@@ -14,9 +21,8 @@ pre-sign-up-trigger:
         existing: true
         forceDeploy: true
 
-sign-in:
-  handler: src/main/functions/auth/sign-in.handler
-  events:
-    - httpApi:
-        method: POST
-        path: /auth/sign-in
+# The trigger is configured manually to support event v3
+# See user-pool.yml file for the configuration
+# DO NOT CHANGE THIS FUNCTION NAME WITHOUT CHANGING IN user-pool.yml
+preTokenGenerationTrigger:
+  handler: src/main/functions/auth/pre-token-generation-trigger.handler
