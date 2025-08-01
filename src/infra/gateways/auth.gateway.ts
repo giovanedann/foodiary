@@ -3,9 +3,11 @@ import { createHmac } from "node:crypto";
 import {
   GetTokensFromRefreshTokenCommand,
   InitiateAuthCommand,
+  RefreshTokenReuseException,
   SignUpCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
 
+import { InvalidRefreshTokenError } from "@application/errors/application/invalid-refresh-token.error";
 import { cognitoClient } from "@infra/clients/cognito.client";
 import { Injectable } from "@kernel/decorators/injectable";
 import { AppConfig } from "@shared/config/app.config";
@@ -70,28 +72,36 @@ export class AuthGateway {
   async refreshToken({
     refreshToken,
   }: AuthGateway.RefreshTokenParams): Promise<AuthGateway.RefreshTokenResult> {
-    const getTokenFromRefreshTokenCommand =
-      new GetTokensFromRefreshTokenCommand({
-        ClientId: this.appConfig.auth.cognito.client.id,
-        RefreshToken: refreshToken,
-        ClientSecret: this.appConfig.auth.cognito.client.secret,
-      });
+    try {
+      const getTokenFromRefreshTokenCommand =
+        new GetTokensFromRefreshTokenCommand({
+          ClientId: this.appConfig.auth.cognito.client.id,
+          RefreshToken: refreshToken,
+          ClientSecret: this.appConfig.auth.cognito.client.secret,
+        });
 
-    const { AuthenticationResult } = await cognitoClient.send(
-      getTokenFromRefreshTokenCommand
-    );
+      const { AuthenticationResult } = await cognitoClient.send(
+        getTokenFromRefreshTokenCommand
+      );
 
-    if (
-      !AuthenticationResult?.AccessToken ||
-      !AuthenticationResult?.RefreshToken
-    ) {
-      throw new Error("Failed to refresh token.");
+      if (
+        !AuthenticationResult?.AccessToken ||
+        !AuthenticationResult?.RefreshToken
+      ) {
+        throw new Error("Failed to refresh token.");
+      }
+
+      return {
+        accessToken: AuthenticationResult.AccessToken,
+        refreshToken: AuthenticationResult.RefreshToken,
+      };
+    } catch (error) {
+      if (error instanceof RefreshTokenReuseException) {
+        throw new InvalidRefreshTokenError();
+      }
+
+      throw error;
     }
-
-    return {
-      accessToken: AuthenticationResult.AccessToken,
-      refreshToken: AuthenticationResult.RefreshToken,
-    };
   }
 
   private getSecretHash({
