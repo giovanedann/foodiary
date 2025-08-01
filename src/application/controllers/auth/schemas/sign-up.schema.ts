@@ -4,11 +4,19 @@ export const signUpSchema = z.object({
   account: z.object({
     email: z
       .email({ error: "Field 'email' has an invalid format" })
-      .min(1, { error: "Field 'email' is required on the request body" }),
+      .min(1, {
+        error: (issue) =>
+          issue.input === undefined
+            ? "Field 'email' is required on the request body"
+            : "Field 'email' must be a non-empty string",
+      }),
     password: z
       .string()
       .min(8, {
-        error: "Field 'password' should be at least 8 characters long",
+        error: (issue) =>
+          issue.input === undefined
+            ? "Field 'password' is required on the request body"
+            : "Field 'password' must be at least 8 characters long",
       })
       .regex(/[a-z]/, {
         error: "Field 'password' must contain at least one lowercase letter",
