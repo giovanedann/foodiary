@@ -6,6 +6,7 @@ import {
   ConfirmForgotPasswordBody,
   confirmForgotPasswordSchema,
 } from "@application/controllers/auth/schemas/confirm-forgot-password.schema";
+import { BadRequestError } from "@application/errors/http/bad-request.error";
 import { ConfirmForgotPasswordUseCase } from "@application/use-cases/auth/confirm-forgot-password.usecase";
 
 @Injectable()
@@ -25,17 +26,21 @@ export class ConfirmForgotPasswordController extends Controller<
   }: Controller.Request<"public", ConfirmForgotPasswordBody>): Promise<
     Controller.Response<ConfirmForgotPasswordController.Response>
   > {
-    const { email, confirmationCode, password } = body;
+    try {
+      const { email, confirmationCode, password } = body;
 
-    await this.forgotPasswordUseCase.execute({
-      email,
-      confirmationCode,
-      password,
-    });
+      await this.forgotPasswordUseCase.execute({
+        email,
+        confirmationCode,
+        password,
+      });
 
-    return {
-      statusCode: 204,
-    };
+      return {
+        statusCode: 204,
+      };
+    } catch {
+      throw new BadRequestError("Failed. Try again in a few seconds.");
+    }
   }
 }
 
