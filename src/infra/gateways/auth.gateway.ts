@@ -1,6 +1,7 @@
 import { createHmac } from "node:crypto";
 
 import {
+  ForgotPasswordCommand,
   GetTokensFromRefreshTokenCommand,
   InitiateAuthCommand,
   RefreshTokenReuseException,
@@ -104,6 +105,18 @@ export class AuthGateway {
     }
   }
 
+  async forgotPassword({
+    email,
+  }: AuthGateway.ForgotPasswordParams): Promise<void> {
+    const forgotPasswordCommand = new ForgotPasswordCommand({
+      ClientId: this.appConfig.auth.cognito.client.id,
+      Username: email,
+      SecretHash: this.getSecretHash({ email }),
+    });
+
+    await cognitoClient.send(forgotPasswordCommand);
+  }
+
   private getSecretHash({
     email,
   }: AuthGateway.GetSecretHashParams): AuthGateway.GetSecretHashResult {
@@ -145,6 +158,10 @@ export namespace AuthGateway {
   export type RefreshTokenResult = {
     accessToken: string;
     refreshToken: string;
+  };
+
+  export type ForgotPasswordParams = {
+    email: string;
   };
 
   export type GetSecretHashParams = {
