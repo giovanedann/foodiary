@@ -6,7 +6,6 @@ import {
   ForgotPasswordBody,
   forgotPasswordSchema,
 } from "@application/controllers/auth/schemas/forgot-password.schema";
-import { BadRequestError } from "@application/errors/http/bad-request.error";
 import { ForgotPasswordUseCase } from "@application/use-cases/auth/forgot-password.usecase";
 
 @Injectable()
@@ -30,13 +29,11 @@ export class ForgotPasswordController extends Controller<
       await this.forgotPasswordUseCase.execute({
         email,
       });
+    } catch {}
 
-      return {
-        statusCode: 204,
-      };
-    } catch {
-      throw new BadRequestError("Failed. Try again in a few seconds.");
-    }
+    return {
+      statusCode: 204,
+    };
   }
 }
 
