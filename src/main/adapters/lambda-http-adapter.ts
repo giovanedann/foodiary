@@ -15,20 +15,22 @@ import { lambdaErrorResponse } from "@main/utils/lambda-error-response";
 
 type Event = APIGatewayProxyEventV2 | APIGatewayProxyEventV2WithJWTAuthorizer;
 
-export function lambdaHttpAdapter(controller: Controller<unknown>) {
+export function lambdaHttpAdapter(controller: Controller<any, unknown>) {
   return async (event: Event): Promise<APIGatewayProxyResultV2> => {
     try {
       const params = event.pathParameters || {};
       const queryParams = event.queryStringParameters || {};
       const body = lambdaBodyParser(event.body);
-
-      if ("authorizer" in event.requestContext) {
-      }
+      const accountId =
+        "authorizer" in event.requestContext
+          ? (event.requestContext.authorizer?.jwt.claims.internalId as string)
+          : null;
 
       const response = await controller.execute({
         body,
         params,
         queryParams,
+        accountId,
       });
 
       return {

@@ -3,13 +3,19 @@ import { Injectable } from "@kernel/decorators/injectable";
 import { Controller } from "@application/contracts/controller";
 
 @Injectable()
-export class CreateMealController extends Controller<unknown> {
-  protected override async handle(): Promise<
+export class CreateMealController extends Controller<
+  "private",
+  CreateMealController.Response
+> {
+  protected override async handle({
+    accountId,
+  }: Controller.Request<"private">): Promise<
     Controller.Response<CreateMealController.Response>
   > {
     return {
       statusCode: 201,
       body: {
+        accountId: accountId,
         message: "Meal created successfully",
       },
     };
@@ -17,5 +23,8 @@ export class CreateMealController extends Controller<unknown> {
 }
 
 export namespace CreateMealController {
-  export type Response = any;
+  export type Response = {
+    accountId: string;
+    message: string;
+  };
 }
