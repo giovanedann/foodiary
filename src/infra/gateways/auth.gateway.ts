@@ -1,6 +1,7 @@
 import { createHmac } from "node:crypto";
 
 import {
+  ConfirmForgotPasswordCommand,
   ForgotPasswordCommand,
   GetTokensFromRefreshTokenCommand,
   InitiateAuthCommand,
@@ -117,6 +118,22 @@ export class AuthGateway {
     await cognitoClient.send(forgotPasswordCommand);
   }
 
+  async confirmForgotPassword({
+    email,
+    confirmationCode,
+    password,
+  }: AuthGateway.ConfirmForgotPasswordParams): Promise<void> {
+    const forgotPasswordCommand = new ConfirmForgotPasswordCommand({
+      ClientId: this.appConfig.auth.cognito.client.id,
+      Username: email,
+      SecretHash: this.getSecretHash({ email }),
+      ConfirmationCode: confirmationCode,
+      Password: password,
+    });
+
+    await cognitoClient.send(forgotPasswordCommand);
+  }
+
   private getSecretHash({
     email,
   }: AuthGateway.GetSecretHashParams): AuthGateway.GetSecretHashResult {
@@ -162,6 +179,12 @@ export namespace AuthGateway {
 
   export type ForgotPasswordParams = {
     email: string;
+  };
+
+  export type ConfirmForgotPasswordParams = {
+    email: string;
+    confirmationCode: string;
+    password: string;
   };
 
   export type GetSecretHashParams = {

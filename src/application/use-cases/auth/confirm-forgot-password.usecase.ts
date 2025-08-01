@@ -1,0 +1,27 @@
+import { AuthGateway } from "@infra/gateways/auth.gateway";
+import { Injectable } from "@kernel/decorators/injectable";
+
+@Injectable()
+export class ConfirmForgotPasswordUseCase {
+  constructor(private readonly authGateway: AuthGateway) {}
+
+  async execute({
+    email,
+    confirmationCode,
+    password,
+  }: ConfirmForgotPasswordUseCase.Input): Promise<void> {
+    await this.authGateway.confirmForgotPassword({
+      email,
+      confirmationCode,
+      password,
+    });
+  }
+}
+
+export namespace ConfirmForgotPasswordUseCase {
+  export type Input = {
+    email: string;
+    confirmationCode: string;
+    password: string;
+  };
+}
