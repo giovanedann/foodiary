@@ -32,10 +32,10 @@ Resources:
           LambdaVersion: V3_0
           LambdaArn: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${self:service}-${self:provider.stage}-preTokenGenerationTrigger"
       EmailConfiguration:
-        From: ${env:COGNITO_EMAILS_FROM}
-        ReplyToEmailAddress: ${env:COGNITO_EMAILS_REPLY_TO}
+        From: ${env:COGNITO_EMAILS_FROM, ''}
+        ReplyToEmailAddress: ${env:COGNITO_EMAILS_REPLY_TO, ''}
         EmailSendingAccount: DEVELOPER
-        SourceArn: ${env:SES_ARN}
+        SourceArn: ${env:SES_ARN, ''}
 
   UserPoolClient:
     Type: AWS::Cognito::UserPoolClient

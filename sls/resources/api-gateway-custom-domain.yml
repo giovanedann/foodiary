@@ -1,0 +1,38 @@
+Resources:
+  ApiGatewayCustomDomainCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: ${env:API_GATEWAY_CUSTOM_DOMAIN, ''}
+      ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: ${env:API_GATEWAY_CUSTOM_DOMAIN, ''}
+          HostedZoneId: ${env:ROUTE_53_HOSTED_ZONE_ID, ''}
+
+  ApiGatewayCustomDomain:
+    Type: AWS::ApiGatewayV2::DomainName
+    Properties:
+      DomainName: ${env:API_GATEWAY_CUSTOM_DOMAIN, ''}
+      RoutingMode: API_MAPPING_ONLY
+      DomainNameConfigurations:
+        - CertificateArn: !Ref ApiGatewayCustomDomainCertificate
+          EndpointType: REGIONAL
+          IpAddressType: IPV4
+          SecurityPolicy: TLS_1_2
+
+  ApiGatewayCustomDomainMapping:
+    Type: AWS::ApiGatewayV2::ApiMapping
+    Properties:
+      # HttpApi resource is generated automatically by serverless when you define an HTTP Api provider in serverless.yml (search on .serverless cloudformation file)
+      ApiId: !Ref HttpApi
+      DomainName: !Ref ApiGatewayCustomDomain
+      Stage: $default
+
+  ApiGatewayCustomDomainDNSRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Type: A
+      Name: !Ref ApiGatewayCustomDomain
+      HostedZoneId: ${env:ROUTE_53_HOSTED_ZONE_ID, ''}
+      AliasTarget:
+        HostedZoneId: !GetAtt ApiGatewayCustomDomain.RegionalHostedZoneId
+        DNSName: !GetAtt ApiGatewayCustomDomain.RegionalDomainName
