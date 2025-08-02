@@ -1,6 +1,10 @@
-import { Column, Heading, Html, Row, Section } from "@react-email/components";
 import React from "react";
 
+import { Column } from "@react-email/column";
+import { Heading } from "@react-email/heading";
+import { Html } from "@react-email/html";
+import { Row } from "@react-email/row";
+import { Section } from "@react-email/section";
 import { TailwindConfig } from "../components/tailwind-config";
 
 interface ForgotPasswordEmailProps {
