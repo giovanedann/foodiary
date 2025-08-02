@@ -2,11 +2,11 @@ Conditions:
   ShouldSetupCustomDomain: !And
     - !Not
       - !Equals
-        - ${env:API_DOMAIN_NAME, ''}
+        - ${env:API_GATEWAY_CUSTOM_DOMAIN, ''}
         - ""
     - !Not
       - !Equals
-        - ${env:ROUTE53_HOSTED_ZONE_ID, ''}
+        - ${env:ROUTE_53_HOSTED_ZONE_ID, ''}
         - ""
 
 Resources:
@@ -43,6 +43,7 @@ Resources:
 
   ApiGatewayCustomDomainDNSRecord:
     Type: AWS::Route53::RecordSet
+    Condition: ShouldSetupCustomDomain
     Properties:
       Type: A
       Name: !Ref ApiGatewayCustomDomain
