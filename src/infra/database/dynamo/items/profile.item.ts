@@ -41,12 +41,12 @@ export class ProfileItem {
     };
   }
 
-  static getPK(profileId: string): ProfileItem.Keys["PK"] {
-    return `ACCOUNT#${profileId}`;
+  static getPK(accountId: string): ProfileItem.Keys["PK"] {
+    return `ACCOUNT#${accountId}`;
   }
 
-  static getSK(profileId: string): ProfileItem.Keys["SK"] {
-    return `ACCOUNT#${profileId}#PROFILE`;
+  static getSK(accountId: string): ProfileItem.Keys["SK"] {
+    return `ACCOUNT#${accountId}#PROFILE`;
   }
 }
 
