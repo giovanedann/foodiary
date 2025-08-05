@@ -10,6 +10,7 @@ import { AccountRepository } from "@infra/database/dynamo/repositories/account.r
 import { SignUpUnitOfWork } from "@infra/database/dynamo/unity-of-work/sign-up-unity-of-work";
 import { AuthGateway } from "@infra/gateways/auth.gateway";
 
+import { GoalCalculatorService } from "@application/services/goal-calculator.service";
 import { Saga } from "@shared/saga/saga";
 
 @Injectable()
@@ -39,12 +40,14 @@ export class SignUpUseCase {
         ...profile,
         accountId: accountEntity.id,
       });
+
+      const goalMacros = GoalCalculatorService.calculate(profileEntity);
       const goalEntity = new Goal({
         accountId: accountEntity.id,
-        calories: 2500,
-        carbohydrates: 500,
-        fats: 100,
-        proteins: 180,
+        calories: goalMacros.calories,
+        carbohydrates: goalMacros.carbohydrates,
+        fats: goalMacros.fats,
+        proteins: goalMacros.proteins,
       });
 
       const { externalId } = await this.authGateway.signUp({
@@ -93,6 +96,7 @@ export namespace SignUpUseCase {
       gender: Profile.Gender;
       height: number;
       weight: number;
+      goal: Profile.Goal;
       activityLevel: Profile.ActivityLevel;
     };
   };
