@@ -46,6 +46,7 @@ const profileSchema = z.object({
     })
     .transform((date) => new Date(date)),
   gender: z.enum(Profile.Gender),
+  goal: z.enum(Profile.Goal),
   height: z.number().min(0, {
     error: (issue) =>
       issue.input === undefined
