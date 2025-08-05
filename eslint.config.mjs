@@ -46,6 +46,7 @@ export default defineConfig([
       "@typescript-eslint/no-namespace": "off",
       "@typescript-eslint/no-explicit-any": "off",
       "comma-dangle": "off",
+      "no-console": "off",
     },
   },
 ]);

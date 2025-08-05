@@ -7,50 +7,56 @@ import { Profile } from "@application/entities/profile.entity";
 import { EmailAlreadyInUseError } from "@application/errors/application/email-already-in-use.error";
 
 import { AccountRepository } from "@infra/database/dynamo/repositories/account.repository";
-
 import { SignUpUnitOfWork } from "@infra/database/dynamo/unity-of-work/sign-up-unity-of-work";
 import { AuthGateway } from "@infra/gateways/auth.gateway";
+
+import { Saga } from "@shared/saga/saga";
 
 @Injectable()
 export class SignUpUseCase {
   constructor(
     private readonly authGateway: AuthGateway,
     private readonly accountRepository: AccountRepository,
-    private readonly signUpUnitOfWork: SignUpUnitOfWork
+    private readonly signUpUnitOfWork: SignUpUnitOfWork,
+    private readonly saga: Saga
   ) {}
 
   async execute({
     account,
     profile,
   }: SignUpUseCase.Input): Promise<SignUpUseCase.Output> {
-    const existingAccount = await this.accountRepository.findByEmail(
-      account.email
-    );
+    return await this.saga.run(async () => {
+      const existingAccount = await this.accountRepository.findByEmail(
+        account.email
+      );
 
-    if (existingAccount) {
-      throw new EmailAlreadyInUseError();
-    }
+      if (existingAccount) {
+        throw new EmailAlreadyInUseError();
+      }
 
-    const accountEntity = new Account({ email: account.email });
-    const profileEntity = new Profile({
-      ...profile,
-      accountId: accountEntity.id,
-    });
-    const goalEntity = new Goal({
-      accountId: accountEntity.id,
-      calories: 2500,
-      carbohydrates: 500,
-      fats: 100,
-      proteins: 180,
-    });
+      const accountEntity = new Account({ email: account.email });
+      const profileEntity = new Profile({
+        ...profile,
+        accountId: accountEntity.id,
+      });
+      const goalEntity = new Goal({
+        accountId: accountEntity.id,
+        calories: 2500,
+        carbohydrates: 500,
+        fats: 100,
+        proteins: 180,
+      });
 
-    const { externalId } = await this.authGateway.signUp({
-      email: account.email,
-      password: account.password,
-      internalId: accountEntity.id,
-    });
+      const { externalId } = await this.authGateway.signUp({
+        email: account.email,
+        password: account.password,
+        internalId: accountEntity.id,
+      });
 
-    try {
+      this.saga.addCompensation(() =>
+        this.authGateway.deleteUser({ externalId })
+      );
+
       accountEntity.externalId = externalId;
 
       await this.signUpUnitOfWork.run({
@@ -70,13 +76,7 @@ export class SignUpUseCase {
         accessToken,
         refreshToken,
       };
-    } catch (error) {
-      await this.authGateway.deleteUser({
-        externalId,
-      });
-
-      throw error;
-    }
+    });
   }
 }
 
