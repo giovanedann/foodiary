@@ -7,9 +7,8 @@ import { Profile } from "@application/entities/profile.entity";
 import { EmailAlreadyInUseError } from "@application/errors/application/email-already-in-use.error";
 
 import { AccountRepository } from "@infra/database/dynamo/repositories/account.repository";
-import { GoalRepository } from "@infra/database/dynamo/repositories/goal.repository";
-import { ProfileRepository } from "@infra/database/dynamo/repositories/profile.repository";
 
+import { SignUpUnitOfWork } from "@infra/database/dynamo/unity-of-work/sign-up-unity-of-work";
 import { AuthGateway } from "@infra/gateways/auth.gateway";
 
 @Injectable()
@@ -17,8 +16,7 @@ export class SignUpUseCase {
   constructor(
     private readonly authGateway: AuthGateway,
     private readonly accountRepository: AccountRepository,
-    private readonly profileRepository: ProfileRepository,
-    private readonly goalRepository: GoalRepository
+    private readonly signUpUnitOfWork: SignUpUnitOfWork
   ) {}
 
   async execute({
@@ -46,11 +44,11 @@ export class SignUpUseCase {
       proteins: 180,
     });
 
-    await Promise.all([
-      this.accountRepository.create(accountEntity),
-      this.profileRepository.create(profileEntity),
-      this.goalRepository.create(goalEntity),
-    ]);
+    await this.signUpUnitOfWork.run({
+      account: accountEntity,
+      goal: goalEntity,
+      profile: profileEntity,
+    });
 
     const { externalId } = await this.authGateway.signUp({
       email: account.email,
