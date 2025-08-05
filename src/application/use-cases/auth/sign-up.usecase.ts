@@ -44,31 +44,39 @@ export class SignUpUseCase {
       proteins: 180,
     });
 
-    await this.signUpUnitOfWork.run({
-      account: accountEntity,
-      goal: goalEntity,
-      profile: profileEntity,
-    });
-
     const { externalId } = await this.authGateway.signUp({
       email: account.email,
       password: account.password,
       internalId: accountEntity.id,
     });
 
-    accountEntity.externalId = externalId;
+    try {
+      accountEntity.externalId = externalId;
 
-    await this.accountRepository.create(accountEntity);
+      await this.signUpUnitOfWork.run({
+        account: accountEntity,
+        goal: goalEntity,
+        profile: profileEntity,
+      });
 
-    const { accessToken, refreshToken } = await this.authGateway.signIn({
-      email: account.email,
-      password: account.password,
-    });
+      await this.accountRepository.create(accountEntity);
 
-    return {
-      accessToken,
-      refreshToken,
-    };
+      const { accessToken, refreshToken } = await this.authGateway.signIn({
+        email: account.email,
+        password: account.password,
+      });
+
+      return {
+        accessToken,
+        refreshToken,
+      };
+    } catch (error) {
+      await this.authGateway.deleteUser({
+        externalId,
+      });
+
+      throw error;
+    }
   }
 }
 
