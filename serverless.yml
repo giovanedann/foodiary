@@ -40,3 +40,4 @@ resources:
   - ${file(./sls/resources/user-pool.yml)}
   - ${file(./sls/resources/main-table.yml)}
   - ${file(./sls/resources/api-gateway-custom-domain.yml)}
+  - ${file(./sls/resources/meals-bucket.yml)}
