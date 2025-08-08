@@ -21,14 +21,14 @@ export default function ForgotPasswordEmail({
           <Row>
             <Column className="font-sans text-center">
               <Heading as="h1" className="text-2xl leading-[0] pt-10">
-                Recupere a sua conta
+                Recover your account
               </Heading>
 
               <Heading
                 as="h2"
                 className="font-normal text-base text-gray-600 pt-4"
               >
-                Resete a sua senha e volte ao foco 💪
+                Reset your password and get back on track 💪
               </Heading>
             </Column>
           </Row>
@@ -47,13 +47,13 @@ export default function ForgotPasswordEmail({
                 as="h3"
                 className="text-base font-normal text-gray-600 leading-0"
               >
-                Se você não solicitou este código, ignore este e-mail.
+                If you did not request this code, please ignore this email.
               </Heading>
               <Heading
                 as="h3"
                 className="text-base font-bold text-black leading-0"
               >
-                Sua conta continua segura. Não se preocupe. ☺️
+                Your account remains secure. Don't worry. ☺️
               </Heading>
             </Column>
           </Row>
