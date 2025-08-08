@@ -18,12 +18,12 @@ export class Meal {
     this.createdAt = attributes.createdAt ?? new Date();
     this.accountId = attributes.accountId;
     this.status = attributes.status;
-    this.attempts = attributes.attempts;
+    this.attempts = attributes.attempts ?? 0;
     this.inputType = attributes.inputType;
     this.inputFileKey = attributes.inputFileKey;
-    this.name = attributes.name;
-    this.icon = attributes.icon;
-    this.foods = attributes.foods;
+    this.name = attributes.name ?? "";
+    this.icon = attributes.icon ?? "";
+    this.foods = attributes.foods ?? [];
   }
 }
 
@@ -32,17 +32,17 @@ export namespace Meal {
     id?: string;
     accountId: string;
     status: Meal.Status;
-    attempts: number;
     inputType: Meal.InputType;
     inputFileKey: string;
-    name: string;
-    icon: string;
-    foods: Meal.Food[];
-    createdAt: Date;
+    attempts?: number;
+    name?: string;
+    icon?: string;
+    foods?: Meal.Food[];
+    createdAt?: Date;
   };
 
   export enum Status {
-    PENDING = "PENDING",
+    UPLOADING = "UPLOADING",
     QUEUED = "QUEUED",
     PROCESSING = "PROCESSING",
     SUCCESS = "SUCCESS",
