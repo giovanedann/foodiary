@@ -27,7 +27,7 @@ export class CreateMealController extends Controller<
     const inputType =
       file.type === "audio/m4a" ? Meal.InputType.AUDIO : Meal.InputType.PICTURE;
 
-    const { mealId } = await this.createMealUseCase.execute({
+    const { mealId, uploadSignature } = await this.createMealUseCase.execute({
       accountId,
       file: {
         inputType,
@@ -38,6 +38,7 @@ export class CreateMealController extends Controller<
       statusCode: 201,
       body: {
         mealId,
+        uploadSignature,
       },
     };
   }
@@ -46,5 +47,6 @@ export class CreateMealController extends Controller<
 export namespace CreateMealController {
   export type Response = {
     mealId: string;
+    uploadSignature: string;
   };
 }

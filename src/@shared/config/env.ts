@@ -16,6 +16,11 @@ export const envSchema = z.object({
   DYNAMO_DB_MAIN_TABLE_NAME: z.string().min(1, {
     error: "DynamoDB main table name missing in environment variables",
   }),
+
+  // S3 bucket
+  MEALS_BUCKET: z.string().min(1, {
+    error: "Meals bucket missing in environment variables",
+  }),
 });
 
 export const env = envSchema.parse(process.env);
