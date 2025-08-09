@@ -6,8 +6,14 @@ export class MealItem {
 
   constructor(private readonly attributes: MealItem.Attributes) {
     this.keys = {
-      PK: MealItem.getPK({ accountId: this.attributes.accountId, mealId: this.attributes.id }),
-      SK: MealItem.getSK({ accountId: this.attributes.accountId, mealId: this.attributes.id }),
+      PK: MealItem.getPK({
+        accountId: this.attributes.accountId,
+        mealId: this.attributes.id,
+      }),
+      SK: MealItem.getSK({
+        accountId: this.attributes.accountId,
+        mealId: this.attributes.id,
+      }),
       GSI1PK: MealItem.getGSI1PK({
         accountId: this.attributes.accountId,
         createdAt: new Date(this.attributes.createdAt),

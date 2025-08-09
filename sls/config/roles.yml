@@ -1,16 +1,17 @@
 statements:
-  - Effect: "Allow"
+  - Effect: Allow
     Action:
-      - "dynamodb:PutItem"
-      - "dynamodb:Query"
+      - dynamodb:PutItem
+      - dynamodb:Query
+      - dynamodb:GetItem
     Resource:
       - !GetAtt MainTable.Arn
       - !Sub "${MainTable.Arn}/index/*"
 
-  - Effect: "Allow"
+  - Effect: Allow
     Action: cognito-idp:AdminDeleteUser
     Resource: !GetAtt UserPool.Arn
 
-  - Effect: "Allow"
+  - Effect: Allow
     Action: s3:PutObject
     Resource: !Sub "${MealsBucket.Arn}/*"
