@@ -16,7 +16,7 @@ export class UpdateGoalUseCase {
     const goal = await this.goalRepository.findByAccountId(accountId);
 
     if (!goal) {
-      throw new ResourceNotFoundError("Profile not found");
+      throw new ResourceNotFoundError("Goal not found");
     }
 
     goal.calories = calories;
