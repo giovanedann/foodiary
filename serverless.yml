@@ -43,3 +43,4 @@ resources:
   - ${file(./sls/resources/main-table.yml)}
   - ${file(./sls/resources/api-gateway-custom-domain.yml)}
   - ${file(./sls/resources/meals-bucket.yml)}
+  - ${file(./sls/resources/meals-bucket-cdn.yml)}

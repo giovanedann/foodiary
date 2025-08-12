@@ -1,0 +1,33 @@
+Resources:
+  MealsBucketCDNOAC:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Description: Origin Access Control for Meals Bucket
+        Name: MealsBucketCDNOAC
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  MealsBucketCDN:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        HttpVersion: http2and3
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true
+        Origins:
+          - Id: S3Origin
+            DomainName: !GetAtt MealsBucket.RegionalDomainName
+            S3OriginConfig: {}
+            OriginAccessControlId: !Ref MealsBucketCDNOAC
+        DefaultCacheBehavior:
+          TargetOriginId: S3Origin
+          Compress: true
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods:
+            - GET
+            - HEAD
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # AWS-managed cache policy (https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html#managed-cache-caching-optimized)
+
