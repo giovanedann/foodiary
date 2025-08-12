@@ -1,5 +1,5 @@
 Conditions:
-  ShouldSetupCustomDomain: !And
+  ShouldSetupAPIGatewayCustomDomain: !And
     - !Not
       - !Equals
         - ${env:API_GATEWAY_CUSTOM_DOMAIN, ''}
@@ -11,7 +11,7 @@ Conditions:
 
 Resources:
   ApiGatewayCustomDomainCertificate:
-    Condition: ShouldSetupCustomDomain
+    Condition: ShouldSetupAPIGatewayCustomDomain
     Type: AWS::CertificateManager::Certificate
     Properties:
       DomainName: ${env:API_GATEWAY_CUSTOM_DOMAIN, ''}
@@ -21,7 +21,7 @@ Resources:
           HostedZoneId: ${env:ROUTE_53_HOSTED_ZONE_ID, ''}
 
   ApiGatewayCustomDomain:
-    Condition: ShouldSetupCustomDomain
+    Condition: ShouldSetupAPIGatewayCustomDomain
     Type: AWS::ApiGatewayV2::DomainName
     Properties:
       DomainName: ${env:API_GATEWAY_CUSTOM_DOMAIN, ''}
@@ -33,7 +33,7 @@ Resources:
           SecurityPolicy: TLS_1_2
 
   ApiGatewayCustomDomainMapping:
-    Condition: ShouldSetupCustomDomain
+    Condition: ShouldSetupAPIGatewayCustomDomain
     Type: AWS::ApiGatewayV2::ApiMapping
     Properties:
       # HttpApi resource is generated automatically by serverless when you define an HTTP Api provider in serverless.yml (search on .serverless cloudformation file)
@@ -43,7 +43,7 @@ Resources:
 
   ApiGatewayCustomDomainDNSRecord:
     Type: AWS::Route53::RecordSet
-    Condition: ShouldSetupCustomDomain
+    Condition: ShouldSetupAPIGatewayCustomDomain
     Properties:
       Type: A
       Name: !Ref ApiGatewayCustomDomain
