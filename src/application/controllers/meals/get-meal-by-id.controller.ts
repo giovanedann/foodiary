@@ -51,7 +51,7 @@ export namespace GetMealByIdController {
       id: string;
       status: Meal.Status;
       inputType: Meal.InputType;
-      inputFileKey: string;
+      inputFileURL: string;
       name: string;
       icon: string;
       foods: Meal.Food[];

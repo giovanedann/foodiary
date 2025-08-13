@@ -21,6 +21,11 @@ export const envSchema = z.object({
   MEALS_BUCKET: z.string().min(1, {
     error: "Meals bucket missing in environment variables",
   }),
+
+  // CDN
+  MEALS_CDN_DOMAIN_NAME: z.string().min(1, {
+    error: "Meals CDN domain name missing in environment variables",
+  }),
 });
 
 export const env = envSchema.parse(process.env);
