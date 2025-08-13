@@ -30,10 +30,9 @@ Resources:
       DistributionConfig:
         Enabled: true
         HttpVersion: http2and3
-        Aliases: !if
+        Aliases: !If
           - ShouldSetupMealsCDNCustomDomain
-          -
-            - ${env:MEALS_CDN_CUSTOM_DOMAIN, ""}
+          - - ${env:MEALS_CDN_CUSTOM_DOMAIN, ""}
           - !Ref AWS::NoValue
         ViewerCertificate: !If
           - ShouldSetupMealsCDNCustomDomain # condition
