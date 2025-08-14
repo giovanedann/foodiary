@@ -45,3 +45,4 @@ resources:
   - ${file(./sls/resources/meals-bucket.yml)}
   - ${file(./sls/resources/meals-bucket-cdn.yml)}
   - ${file(./sls/resources/meals-queue.yml)}
+  - ${file(./sls/resources/dlq-alarms-topic.yml)}
