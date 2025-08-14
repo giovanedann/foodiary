@@ -33,3 +33,13 @@ onMealFileUploaded:
         event: s3:ObjectCreated:*
         existing: true
         forceDeploy: true
+
+processMeal:
+  handler: src/main/functions/meals/process-meal.handler
+  memorySize: 1024
+  timeout: 120 # 2 minutes
+  events:
+    - sqs:
+        arn: !GetAtt MealsQueue.Arn
+        batchSize: 2
+        maximumBatchingWindow: 60
