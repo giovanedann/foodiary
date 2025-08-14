@@ -1,3 +1,4 @@
+import { HeadObjectCommand } from "@aws-sdk/client-s3";
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 import KSUID from "ksuid";
 
@@ -25,6 +26,28 @@ export class MealsFileStorageGateway {
     const cdn = this.appConfig.cdn.mealsCDN;
 
     return `https://${cdn}/${fileKey}`;
+  }
+
+  async getFileMetadata({
+    fileKey,
+  }: MealsFileStorageGateway.GetFileMetadataParams): Promise<MealsFileStorageGateway.GetFileMetadataResult> {
+    const headObjectCommand = new HeadObjectCommand({
+      Bucket: this.appConfig.storage.s3.mealsBucket,
+      Key: fileKey,
+    });
+
+    const { Metadata = {} } = await s3Client.send(headObjectCommand);
+
+    if (!Metadata.accountid || !Metadata.mealid) {
+      throw new Error(
+        `[MealsFileStorageGateway - getFileMetadata method] - Cannot process file ${fileKey}`
+      );
+    }
+
+    return {
+      accountId: Metadata.accountid,
+      mealId: Metadata.mealid,
+    };
   }
 
   async createPOST({
@@ -56,7 +79,7 @@ export class MealsFileStorageGateway {
       JSON.stringify({
         url,
         fields: { ...fields, "Content-Type": contentType },
-      }),
+      })
     ).toString("base64");
 
     return {
@@ -69,6 +92,15 @@ export namespace MealsFileStorageGateway {
   export type GenerateInputFileKeyParams = {
     accountId: string;
     inputType: Meal.InputType;
+  };
+
+  export type GetFileMetadataParams = {
+    fileKey: string;
+  };
+
+  export type GetFileMetadataResult = {
+    accountId: string;
+    mealId: string;
   };
 
   export type CreatePostParams = {

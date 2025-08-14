@@ -6,7 +6,7 @@ loadEnvFile();
 
 const API_URL = `https://${process.env.API_GATEWAY_CUSTOM_DOMAIN}/meals`;
 const TOKEN =
-  "eyJraWQiOiJwODdBODBlTkloUFJYRlk4a21IdW1oRGI2WmpPajI3NWFlOGRTNHJUQmxJPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJlNGQ4MjRlOC05MGIxLTcwNmItZDc5NC03NGE2ZTViMGVmMDUiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0xLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMV9VUTlNQW9jTHQiLCJjbGllbnRfaWQiOiI0ZjVkcGJxdGczbW5uYXFoajV0OThvNjVxMCIsIm9yaWdpbl9qdGkiOiJlMGQwNTViNy1kZDNhLTQxMjAtOGRiZC05OWZjNjc4ZDMzNGIiLCJpbnRlcm5hbElkIjoiMzBxbVJrc3ZLYkNiZGpiU0NncVdzQ0dERnBRIiwiZXZlbnRfaWQiOiIyOTIzOTJhMy0zMWYxLTQ3MzYtODQ4Ni1mZWYwNTIxMDQxZjEiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNzU1MTQxMDg5LCJleHAiOjE3NTUxODQyODksImlhdCI6MTc1NTE0MTA4OSwianRpIjoiYjM4MDAxZDYtMTI1My00ZTg1LWFjY2MtYTAxMDc2ZjQxYmRlIiwidXNlcm5hbWUiOiJlNGQ4MjRlOC05MGIxLTcwNmItZDc5NC03NGE2ZTViMGVmMDUifQ.hlM7m5eEO-TJJu7pMUh5n4WQNvk4WpOqNii84chE2ALnOKZZoY0tXUA--wADIm5QU5GLZ-Gvtqu9YzlHQfdE7nXPwK2rj3Vwjqeo6RTvb7G6nQoRs-867KRS2TABe3Fo7AcpSwOd4ui2tvYIykNyvz6ukTdBjG1mdEbhas1HtbSq2o0Lp7ohIQwJPVb40DLukFPLQw7QkTrsVBkN3oYPZ5Pm2CCoGfOGLC7v_OusU0Uj3cxQc1ktA3ml0RV8pHSzMz5ZePJuwrf8NcqxGPTlPySsmbMKp8s0QBDd3TA-r_INqaLwyNL9SbSLwzfIT36yiEAulN6CE4fMn5H5J4k0kQ";
+  "eyJraWQiOiJwODdBODBlTkloUFJYRlk4a21IdW1oRGI2WmpPajI3NWFlOGRTNHJUQmxJPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJlNGQ4MjRlOC05MGIxLTcwNmItZDc5NC03NGE2ZTViMGVmMDUiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0xLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMV9VUTlNQW9jTHQiLCJjbGllbnRfaWQiOiI0ZjVkcGJxdGczbW5uYXFoajV0OThvNjVxMCIsIm9yaWdpbl9qdGkiOiI1ODM2MzY5My1iOTk4LTQ0OTktODFjMi0yOGVmYTVjMDVkNWYiLCJpbnRlcm5hbElkIjoiMzBxbVJrc3ZLYkNiZGpiU0NncVdzQ0dERnBRIiwiZXZlbnRfaWQiOiI5ZDdjNTIyNy0zNTZjLTQ0YzYtOWM3MC1kYzJlYjI2ZTE1ODciLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNzU1MjA2NDMwLCJleHAiOjE3NTUyNDk2MjksImlhdCI6MTc1NTIwNjQzMCwianRpIjoiOGM2NWNmZWMtMDc5ZS00MDM5LTk3NjQtYmRkYWZiNmNlY2IyIiwidXNlcm5hbWUiOiJlNGQ4MjRlOC05MGIxLTcwNmItZDc5NC03NGE2ZTViMGVmMDUifQ.40YtAeRXfFH_VUFnOeBodutn6aO4rgawmM2iMxRiV1JM1mvajOR41cqBHxenxhByIWtUxMVG32nDESykdLtt4eos-KGGn0EoHcKeyX1yadGktvTRE6PvBVDe_p6LjkAnyDCzjkhulaKcrPqFn7MqkDiYpKviO3S-R_KP8bOs6x8j2qMIYW5ZQeLk-LSvsm7_QiihVjLDcGN77V4iJFa85CupHHq3kStFNIx9bXRzfV5HlwGDRxMOz2xkt1U2Ao3dc82HWax9O3t2h70Ne7J_DU6DDH2KUgaWJ6-VBj48AcPNq7qGuS9lgUEJkV3wJL6Wozr0EHD3ky1nd1EyZgwdYw";
 
 interface IPresignResponse {
   uploadSignature: string;
@@ -33,10 +33,10 @@ async function readImageFile(filePath: string): Promise<{
 
 async function createMeal(
   fileType: string,
-  fileSize: number,
+  fileSize: number
 ): Promise<IPresignDecoded> {
   console.log(
-    `🚀 Requesting presigned POST for ${fileSize} bytes of type ${fileType}`,
+    `🚀 Requesting presigned POST for ${fileSize} bytes of type ${fileType}`
   );
   const res = await fetch(API_URL, {
     method: "POST",
@@ -49,13 +49,13 @@ async function createMeal(
 
   if (!res.ok) {
     throw new Error(
-      `Failed to get presigned POST: ${res.status} ${res.statusText}`,
+      `Failed to get presigned POST: ${res.status} ${res.statusText}`
     );
   }
 
   const json = (await res.json()) as IPresignResponse;
   const decoded = JSON.parse(
-    Buffer.from(json.uploadSignature, "base64").toString("utf-8"),
+    Buffer.from(json.uploadSignature, "base64").toString("utf-8")
   ) as IPresignDecoded;
 
   console.log("✅ Received presigned POST data");
@@ -66,12 +66,12 @@ function buildFormData(
   fields: Record<string, string>,
   fileData: Buffer,
   filename: string,
-  fileType: string,
+  fileType: string
 ): FormData {
   console.log(
     `📦 Building FormData with ${
       Object.keys(fields).length
-    } fields and file ${filename}`,
+    } fields and file ${filename}`
   );
   const form = new FormData();
   for (const [key, value] of Object.entries(fields)) {
@@ -92,7 +92,7 @@ async function uploadToS3(url: string, form: FormData): Promise<void> {
   if (!res.ok) {
     const text = await res.text();
     throw new Error(
-      `S3 upload failed: ${res.status} ${res.statusText} — ${text}`,
+      `S3 upload failed: ${res.status} ${res.statusText} — ${text}`
     );
   }
 
@@ -112,5 +112,5 @@ async function uploadMealImage(filePath: string): Promise<void> {
 }
 
 uploadMealImage(path.resolve(__dirname, "assets", "simo.jpg")).catch(() =>
-  process.exit(1),
+  process.exit(1)
 );
