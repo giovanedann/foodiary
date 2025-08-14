@@ -30,6 +30,7 @@ export class MealsFileStorageGateway {
   async createPOST({
     file,
     mealId,
+    accountId,
   }: MealsFileStorageGateway.CreatePostParams): Promise<MealsFileStorageGateway.CreatePostResult> {
     const bucket = this.appConfig.storage.s3.mealsBucket;
     const contentType =
@@ -47,6 +48,7 @@ export class MealsFileStorageGateway {
       ],
       Fields: {
         "x-amz-meta-mealid": mealId,
+        "x-amz-meta-accountid": accountId,
       },
     });
 
@@ -54,7 +56,7 @@ export class MealsFileStorageGateway {
       JSON.stringify({
         url,
         fields: { ...fields, "Content-Type": contentType },
-      })
+      }),
     ).toString("base64");
 
     return {
@@ -71,6 +73,7 @@ export namespace MealsFileStorageGateway {
 
   export type CreatePostParams = {
     mealId: string;
+    accountId: string;
     file: {
       key: string;
       size: number;

@@ -7,7 +7,7 @@ import { Injectable } from "@kernel/decorators/injectable";
 export class CreateMealUseCase {
   constructor(
     private readonly mealRepository: MealRepository,
-    private readonly mealsFileStorageGateway: MealsFileStorageGateway
+    private readonly mealsFileStorageGateway: MealsFileStorageGateway,
   ) {}
 
   async execute({
@@ -28,12 +28,13 @@ export class CreateMealUseCase {
 
     const [{ uploadSignature }] = await Promise.all([
       this.mealsFileStorageGateway.createPOST({
+        accountId,
+        mealId: mealEntity.id,
         file: {
           key: inputFileKey,
           inputType: file.inputType,
           size: file.size,
         },
-        mealId: mealEntity.id,
       }),
       this.mealRepository.create(mealEntity),
     ]);
