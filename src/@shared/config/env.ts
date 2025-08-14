@@ -26,6 +26,11 @@ export const envSchema = z.object({
   MEALS_CDN_DOMAIN_NAME: z.string().min(1, {
     error: "Meals CDN domain name missing in environment variables",
   }),
+
+  // SQS
+  MEALS_QUEUE_URL: z.string().min(1, {
+    error: "Meals queue URL missing in environment variables",
+  }),
 });
 
 export const env = envSchema.parse(process.env);
