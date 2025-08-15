@@ -42,4 +42,3 @@ processMeal:
     - sqs:
         arn: !GetAtt MealsQueue.Arn
         batchSize: 2
-        maximumBatchingWindow: 60
