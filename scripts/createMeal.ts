@@ -111,6 +111,6 @@ async function uploadMealImage(filePath: string): Promise<void> {
   }
 }
 
-uploadMealImage(path.resolve(__dirname, "assets", "simo.jpg")).catch(() =>
+uploadMealImage(path.resolve(__dirname, "assets", "meal.jpg")).catch(() =>
   process.exit(1)
 );
