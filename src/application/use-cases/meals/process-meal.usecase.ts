@@ -41,6 +41,7 @@ export class ProcessMealUseCase {
 
       await this.mealRepository.save(meal);
 
+      meal.status = Meal.Status.SUCCESS;
       meal.name = "Name";
       meal.icon = "🥐";
       meal.foods = [
