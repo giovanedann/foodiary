@@ -1,4 +1,5 @@
 import { IQueueConsumer } from "@application/contracts/queue-consumer";
+import { ProcessMealUseCase } from "@application/use-cases/meals/process-meal.usecase";
 import { MealsQueueGateway } from "@infra/gateways/meals-queue.gateway";
 import { Injectable } from "@kernel/decorators/injectable";
 
@@ -6,11 +7,12 @@ import { Injectable } from "@kernel/decorators/injectable";
 export class MealsQueueConsumer
   implements IQueueConsumer<MealsQueueGateway.Message>
 {
+  constructor(private readonly processMealUseCase: ProcessMealUseCase) {}
+
   async process({
     accountId,
     mealId,
   }: MealsQueueGateway.Message): Promise<void> {
-    // Implement your message processing logic here
-    console.log("Processing message:", { accountId, mealId });
+    await this.processMealUseCase.execute({ accountId, mealId });
   }
 }
