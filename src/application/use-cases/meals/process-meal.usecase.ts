@@ -1,7 +1,9 @@
 import { Meal } from "@application/entities/meal.entity";
 import { ResourceNotFoundError } from "@application/errors/application/resource-not-found.error";
+
+import { MealsAIGateway } from "@infra/ai/gateways/meals-ai.gateway";
 import { MealRepository } from "@infra/database/dynamo/repositories/meal.repository";
-import { MealsAIGateway } from "@infra/gateways/meals-ai.gateway";
+
 import { Injectable } from "@kernel/decorators/injectable";
 
 const MAX_ATTEMPTS_ALLOWED = 2;
