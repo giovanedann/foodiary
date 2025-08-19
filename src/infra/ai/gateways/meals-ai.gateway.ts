@@ -1,4 +1,4 @@
-import OpenAI from "openai";
+import OpenAI, { toFile } from "openai";
 import { z } from "zod";
 
 import { Meal } from "@application/entities/meal.entity";
@@ -6,7 +6,11 @@ import { Meal } from "@application/entities/meal.entity";
 import { MealsFileStorageGateway } from "@infra/gateways/meals-file-storage.gateway";
 
 import { Injectable } from "@kernel/decorators/injectable";
+
+import { downloadFileFromURL } from "@shared/utils/download-file-from-utl";
+
 import { getImagePrompt } from "../prompts/get-image.prompt";
+import { getTextPrompt } from "../prompts/get-text.prompt";
 
 const mealSchema = z.object({
   name: z.string(),
@@ -32,11 +36,11 @@ export class MealsAIGateway {
   ) {}
 
   async processMeal(meal: Meal): Promise<MealsAIGateway.ProcessMealResult> {
-    if (meal.inputType === Meal.InputType.PICTURE) {
-      const imageUrl = this.mealsFileStorageGateway.getFileURL(
-        meal.inputFileKey
-      );
+    const mealFileURL = this.mealsFileStorageGateway.getFileURL(
+      meal.inputFileKey
+    );
 
+    if (meal.inputType === Meal.InputType.PICTURE) {
       const response = await this.client.chat.completions.create({
         model: "gpt-5-nano",
         response_format: {
@@ -57,7 +61,7 @@ export class MealsAIGateway {
             content: [
               {
                 type: "image_url",
-                image_url: { url: imageUrl, detail: "high" },
+                image_url: { url: mealFileURL, detail: "high" },
               },
               {
                 type: "text",
@@ -92,11 +96,61 @@ export class MealsAIGateway {
       return data;
     }
 
-    return {
-      name: meal.name,
-      icon: meal.icon,
-      foods: meal.foods,
-    };
+    const audioFile = await downloadFileFromURL(mealFileURL);
+
+    const { text } = await this.client.audio.transcriptions.create({
+      model: "gpt-4o-mini-transcribe",
+      file: await toFile(audioFile, "audio.m4a", { type: "audio/m4a" }),
+    });
+
+    console.log(text);
+
+    const response = await this.client.chat.completions.create({
+      model: "gpt-5-nano",
+      response_format: {
+        type: "json_schema",
+        json_schema: {
+          name: "meal",
+          strict: true,
+          schema: z.toJSONSchema(mealSchema),
+        },
+      },
+      messages: [
+        {
+          role: "system",
+          content: getTextPrompt(),
+        },
+        {
+          role: "user",
+          content: `Meal date: ${meal.createdAt}\n\nMeal: ${text}`,
+        },
+      ],
+    });
+
+    const stringifiedMealJson = response.choices[0].message.content;
+
+    if (!stringifiedMealJson) {
+      console.error("Open AI response:", JSON.stringify(response, null, 2));
+      throw new Error(`Failed processing meal ${meal.id}`);
+    }
+
+    const mealJson = JSON.parse(stringifiedMealJson);
+
+    console.log(JSON.stringify(mealJson, null, 2));
+
+    const { success, error, data } = mealSchema.safeParse(mealJson);
+
+    if (!success) {
+      console.error(
+        "Failed parsing meal json in MealsAIGateway.processMeal.",
+        error
+      );
+      throw new Error(
+        `Failed processing meal ${meal.id}. Invalid JSON meal output.`
+      );
+    }
+
+    return data;
   }
 }
 
