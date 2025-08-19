@@ -19,7 +19,7 @@ Resources:
     Properties:
       OriginAccessControlConfig:
         Description: Origin Access Control for Meals Bucket
-        Name: MealsBucketCDNOAC
+        Name: ${self:service}-${self:provider.stage}-meals-bucket-CDN-OAC
         OriginAccessControlOriginType: s3
         SigningBehavior: always
         SigningProtocol: sigv4
