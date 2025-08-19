@@ -1,4 +1,5 @@
 import OpenAI, { toFile } from "openai";
+import { ChatCompletionContentPart } from "openai/resources/index";
 import { z } from "zod";
 
 import { Meal } from "@application/entities/meal.entity";
@@ -41,70 +42,36 @@ export class MealsAIGateway {
     );
 
     if (meal.inputType === Meal.InputType.PICTURE) {
-      const response = await this.client.chat.completions.create({
-        model: "gpt-5-nano",
-        response_format: {
-          type: "json_schema",
-          json_schema: {
-            name: "meal",
-            strict: true,
-            schema: z.toJSONSchema(mealSchema),
-          },
-        },
-        messages: [
+      return this.callAI({
+        mealId: meal.id,
+        systemPrompt: getImagePrompt(),
+        userMessageParts: [
           {
-            role: "system",
-            content: getImagePrompt(),
+            type: "image_url",
+            image_url: { url: mealFileURL, detail: "high" },
           },
           {
-            role: "user",
-            content: [
-              {
-                type: "image_url",
-                image_url: { url: mealFileURL, detail: "high" },
-              },
-              {
-                type: "text",
-                text: `Meal date: ${meal.createdAt}`,
-              },
-            ],
+            type: "text",
+            text: `Meal date: ${meal.createdAt}`,
           },
         ],
       });
-
-      const stringifiedMealJson = response.choices[0].message.content;
-
-      if (!stringifiedMealJson) {
-        console.error("Open AI response:", JSON.stringify(response, null, 2));
-        throw new Error(`Failed processing meal ${meal.id}`);
-      }
-
-      const mealJson = JSON.parse(stringifiedMealJson);
-
-      const { success, error, data } = mealSchema.safeParse(mealJson);
-
-      if (!success) {
-        console.error(
-          "Failed parsing meal json in MealsAIGateway.processMeal.",
-          error
-        );
-        throw new Error(
-          `Failed processing meal ${meal.id}. Invalid JSON meal output.`
-        );
-      }
-
-      return data;
     }
 
-    const audioFile = await downloadFileFromURL(mealFileURL);
+    const transcribedAudio = await this.transcribe(mealFileURL);
 
-    const { text } = await this.client.audio.transcriptions.create({
-      model: "gpt-4o-mini-transcribe",
-      file: await toFile(audioFile, "audio.m4a", { type: "audio/m4a" }),
+    return this.callAI({
+      mealId: meal.id,
+      systemPrompt: getTextPrompt(),
+      userMessageParts: `Meal date: ${meal.createdAt}\n\nMeal: ${transcribedAudio}`,
     });
+  }
 
-    console.log(text);
-
+  private async callAI({
+    userMessageParts,
+    mealId,
+    systemPrompt,
+  }: MealsAIGateway.CallAIParams): Promise<MealsAIGateway.ProcessMealResult> {
     const response = await this.client.chat.completions.create({
       model: "gpt-5-nano",
       response_format: {
@@ -118,11 +85,11 @@ export class MealsAIGateway {
       messages: [
         {
           role: "system",
-          content: getTextPrompt(),
+          content: systemPrompt,
         },
         {
           role: "user",
-          content: `Meal date: ${meal.createdAt}\n\nMeal: ${text}`,
+          content: userMessageParts,
         },
       ],
     });
@@ -131,12 +98,10 @@ export class MealsAIGateway {
 
     if (!stringifiedMealJson) {
       console.error("Open AI response:", JSON.stringify(response, null, 2));
-      throw new Error(`Failed processing meal ${meal.id}`);
+      throw new Error(`Failed processing meal ${mealId}`);
     }
 
     const mealJson = JSON.parse(stringifiedMealJson);
-
-    console.log(JSON.stringify(mealJson, null, 2));
 
     const { success, error, data } = mealSchema.safeParse(mealJson);
 
@@ -146,11 +111,22 @@ export class MealsAIGateway {
         error
       );
       throw new Error(
-        `Failed processing meal ${meal.id}. Invalid JSON meal output.`
+        `Failed processing meal ${mealId}. Invalid JSON meal output.`
       );
     }
 
     return data;
+  }
+
+  private async transcribe(audioFileURL: string) {
+    const audioFile = await downloadFileFromURL(audioFileURL);
+
+    const { text } = await this.client.audio.transcriptions.create({
+      model: "gpt-4o-mini-transcribe",
+      file: await toFile(audioFile, "audio.m4a", { type: "audio/m4a" }),
+    });
+
+    return text;
   }
 }
 
@@ -159,5 +135,11 @@ export namespace MealsAIGateway {
     name: string;
     icon: string;
     foods: Meal.Food[];
+  };
+
+  export type CallAIParams = {
+    mealId: string;
+    userMessageParts: string | ChatCompletionContentPart[];
+    systemPrompt: string;
   };
 }

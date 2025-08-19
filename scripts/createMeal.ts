@@ -120,3 +120,7 @@ async function uploadFile(
 uploadFile(path.resolve(__dirname, "assets", "meal.m4a"), "audio/m4a").catch(
   () => process.exit(1)
 );
+
+uploadFile(path.resolve(__dirname, "assets", "meal2.jpg"), "image/jpeg").catch(
+  () => process.exit(1)
+);
