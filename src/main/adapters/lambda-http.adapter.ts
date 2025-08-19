@@ -10,14 +10,22 @@ import { ApplicationError } from "@application/errors/application/application.er
 import { ErrorCode } from "@application/errors/error-codes";
 import { HttpError } from "@application/errors/http/http.error";
 
+import { Registry } from "@kernel/di/registry";
 import { lambdaBodyParser } from "@main/utils/lambda-body-parser";
 import { lambdaErrorResponse } from "@main/utils/lambda-error-response";
+import { Constructor } from "@shared/types/constructor";
 
 type Event = APIGatewayProxyEventV2 | APIGatewayProxyEventV2WithJWTAuthorizer;
 
-export function lambdaHttpAdapter(controller: Controller<any, unknown>) {
+export function lambdaHttpAdapter(
+  controllerImplementation: Constructor<Controller<any, unknown>>
+) {
   return async (event: Event): Promise<APIGatewayProxyResultV2> => {
     try {
+      const controller = Registry.getInstance().resolve(
+        controllerImplementation
+      );
+
       const params = event.pathParameters || {};
       const queryParams = event.queryStringParameters || {};
       const body = lambdaBodyParser(event.body);
@@ -61,7 +69,6 @@ export function lambdaHttpAdapter(controller: Controller<any, unknown>) {
         return lambdaErrorResponse(error);
       }
 
-      // eslint-disable-next-line no-console
       console.log(error);
 
       return lambdaErrorResponse({
